@@ -36,6 +36,16 @@ jobs:
           docker push kubegourav/netflix:latest 
 
         env:
-          DOCKER_CLI_ACI: 1   
-     
-         
+          DOCKER_CLI_ACI: 1 
+
+  deploy:    
+    needs: build
+    runs-on: [aws-netflix]  
+    steps:
+    - name: Pull the docker image
+      run: docker pull kubegourav/netflix:latest
+    - name: Trivy image scan
+      run: trivy image kubegourav/netflix:latest
+    - name: Run the container netflix
+      run: docker run -d --name netflix -p 8081:80 kubegourav/netflix:latest
+               
